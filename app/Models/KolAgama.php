@@ -13,6 +13,5 @@ class KolAgama extends Model
     protected $fillable = [
         'id_agama',
         'nama_agama',
-        'id_feeder',
     ];
 }
