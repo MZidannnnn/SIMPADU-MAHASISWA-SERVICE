@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             KolAgamaSeeder::class,
             KolDarahSeeder::class,
+            KolJkSeeder::class,
             // Add other seeders here
         ]);
       
