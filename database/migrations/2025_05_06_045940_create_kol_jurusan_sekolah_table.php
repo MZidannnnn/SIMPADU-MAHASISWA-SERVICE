@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kol_jurusan_sekolah', function (Blueprint $table) {
-            $table->string('id_jurusan_sekolah', 50)->primary()->collation('latin1_general_ci');
-            $table->string('nama_sekolah', 50)->collation('latin1_general_ci');
+            $table->char('id_jurusan_sekolah', 50)->primary()->collation('latin1_general_ci');
+            $table->string('nama', 50)->collation('latin1_general_ci');
+            $table->string('nama_jurusan', 100)->collation('latin1_general_ci');
             $table->timestamps();
         });
     }
