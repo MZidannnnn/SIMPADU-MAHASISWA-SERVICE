@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
             KolAgamaSeeder::class,
             KolDarahSeeder::class,
             KolJkSeeder::class,
+            KolJurusanSekolahSeeder::class,
+            KolKabupatenSeeder::class,
+            KolProvinsiSeeder::class,
             // Add other seeders here
         ]);
       
