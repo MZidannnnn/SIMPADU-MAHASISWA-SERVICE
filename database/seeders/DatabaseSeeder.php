@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             KolProvinsiSeeder::class,
             KolPekerjaanSeeder::class,
             KolPendidikanSeeder::class,
+            KolPenghasilanSeeder::class,
             // Add other seeders here
         ]);
       
