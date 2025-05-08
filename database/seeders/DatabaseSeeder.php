@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\KolDarah;
 use App\Models\KolPekerjaan;
 use App\Models\KolPendidikan;
+use App\Models\KolStatusHidup;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -32,6 +33,7 @@ class DatabaseSeeder extends Seeder
             KolPekerjaanSeeder::class,
             KolPendidikanSeeder::class,
             KolPenghasilanSeeder::class,
+            KolStatusHidupSeeder::class,
             // Add other seeders here
         ]);
       
