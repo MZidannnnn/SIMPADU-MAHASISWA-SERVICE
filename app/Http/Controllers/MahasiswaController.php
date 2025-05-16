@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrangTua;
 use App\Models\Mahasiswa;
+use App\Models\StatusMhs;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class MahasiswaController extends Controller
     // Menampilkan seluruh data mahasiswa
     public function index()
     {
-        $Mahasiswas = Mahasiswa::get();
+        $Mahasiswas = Mahasiswa::with('status')->get();
 
         foreach ($Mahasiswas as $Mahasiswa) {
             foreach (
@@ -44,7 +45,7 @@ class MahasiswaController extends Controller
     // Menampilkan data mahasiswa berdasarkan nim
     public function show($nim)
     {
-        $Mahasiswa = Mahasiswa::findOrFail($nim);
+        $Mahasiswa = Mahasiswa::with('status')->findOrFail($nim);
 
         foreach (
             [
@@ -214,4 +215,12 @@ class MahasiswaController extends Controller
             ], 500);
         }
     }
+
+    public function DaftarStatusMahasiswa()
+    {
+        $StatusMhs = StatusMhs::get();
+
+        return $StatusMhs;
+    }
+
 }

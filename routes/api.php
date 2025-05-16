@@ -10,4 +10,5 @@ Route::apiResource('mahasiswa', MahasiswaController::class)->parameters([
     'mahasiswa' => 'nim',
 ]);
 
-Route::put('/mahasiswa/profile/update', [MahasiswaController::class, 'updateProfileMahasiswa']);
+// Route::put('/mahasiswa/profile/update', [MahasiswaController::class, 'updateProfileMahasiswa']);
+Route::get('/status_mhs', [MahasiswaController::class, 'DaftarStatusMahasiswa']);
