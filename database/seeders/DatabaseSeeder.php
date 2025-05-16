@@ -25,17 +25,17 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-            KolAgamaSeeder::class,
-            KolDarahSeeder::class,
-            KolJkSeeder::class,
-            KolJurusanSekolahSeeder::class,
-            KolKabupatenSeeder::class,
-            KolProvinsiSeeder::class,
-            KolPekerjaanSeeder::class,
-            KolPendidikanSeeder::class,
-            KolPenghasilanSeeder::class,
-            KolStatusHidupSeeder::class,
-            KolStatusSipilSeeder::class,
+            // KolAgamaSeeder::class,
+            // KolDarahSeeder::class,
+            // KolJkSeeder::class,
+            // KolJurusanSekolahSeeder::class,
+            // KolKabupatenSeeder::class,
+            // KolProvinsiSeeder::class,
+            // KolPekerjaanSeeder::class,
+            // KolPendidikanSeeder::class,
+            // KolPenghasilanSeeder::class,
+            // KolStatusHidupSeeder::class,
+            // KolStatusSipilSeeder::class,
             // Add other seeders here
         ]);
       

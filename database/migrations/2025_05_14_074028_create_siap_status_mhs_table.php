@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kol_status_sipil', function (Blueprint $table) {
-            $table->char('id_status_sipil', 1)->primary()->collation('latin1_general_ci');
-            $table->string('nama_status_sipil', 50)->collation('latin1_general_ci')->nullable();
+        Schema::create('siap_status_mhs', function (Blueprint $table) {
+            $table->char('id_status_mhs', 1)->primary(); // PRIMARY KEY
+            $table->string('nama_status_mhs', 50); // status mahasiswa
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kol_status_sipil');
+        Schema::dropIfExists('siap_status_mhs');
     }
 };

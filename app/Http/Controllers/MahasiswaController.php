@@ -2,25 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMahasiswaRequest;
+use App\Models\OrangTua;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Http\Requests\UpdateMahasiswaRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreMahasiswaRequest;
+use App\Http\Requests\UpdateMahasiswaRequest;
 
 class MahasiswaController extends Controller
 {
     // Menampilkan seluruh data mahasiswa
     public function index()
     {
-        $Mahasiswas = Mahasiswa::all();
+        $Mahasiswas = Mahasiswa::get();
 
         foreach ($Mahasiswas as $Mahasiswa) {
-            if ($Mahasiswa->foto) {
-                $Mahasiswa->gambar_url = asset('storage/' . $Mahasiswa->foto);
-            } else {
-                $Mahasiswa->gambar_url = null;
+            foreach (
+                [
+                    'foto_profile',
+                    'foto_ktp',
+                    'foto_ijasah',
+                    'foto_transkip',
+                    'foto_kk',
+                    'foto_ak',
+                    'foto_sehat',
+                    'foto_warna'
+                ] as $field
+            ) {
+                $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field}!== 'blm_ada_foto.png'
+                    ? asset('storage/' . $Mahasiswa->{$field})
+                    : asset('assets/default/blm_ada_foto.png');
             }
         }
 
@@ -32,33 +46,52 @@ class MahasiswaController extends Controller
     {
         $Mahasiswa = Mahasiswa::findOrFail($nim);
 
-        if ($Mahasiswa->foto) {
-            $Mahasiswa->gambar_url = asset('storage/' . $Mahasiswa->foto);
-        } else {
-            $Mahasiswa->gambar_url = null;
+        foreach (
+            [
+                'foto_profile',
+                'foto_ktp',
+                'foto_ijasah',
+                'foto_transkip',
+                'foto_kk',
+                'foto_ak',
+                'foto_sehat',
+                'foto_warna'
+            ] as $field
+        ) {
+            $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field}!== 'blm_ada_foto.png'
+                ? asset('storage/' . $Mahasiswa->{$field})
+                : asset('assets/default/blm_ada_foto.png');
         }
+
         return response()->json($Mahasiswa); // <-- ini penting!
+
     }
 
     // Menambah data mahasiswa
     public function store(StoreMahasiswaRequest $request)
     {
-        try {
-            $data = $request->validated(); // ambil data yang sudah divalidasi otomatis
 
-            if ($request->hasFile('foto')) {
-                $data['foto'] = $request->file('foto')->store('gambar_mahasiswa', 'public');
+        try {
+            $data = $request->validated();
+            // $data = $request->except('ortu');
+
+            // simpan foto 
+            foreach (['foto_profile' => 'gambar_mahasiswa/foto_profile', 'foto_ktp' => 'gambar_mahasiswa/foto_ktp', 'foto_ijasah' => 'gambar_mahasiswa/foto_ijasah', 'foto_transkip' => 'gambar_mahasiswa/foto_transkip', 'foto_kk' => 'gambar_mahasiswa/foto_kk', 'foto_ak' => 'gambar_mahasiswa/foto_ak', 'foto_sehat' => 'gambar_mahasiswa/foto_sehat', 'foto_warna' => 'gambar_mahasiswa/foto_warna'] as $field => $path) {
+                if ($request->hasFile($field)) {
+                    $data[$field] = $request->file($field)->store($path, 'public');
+                }
             }
 
-            $Mahasiswa = Mahasiswa::create($data);
+            $mahasiswa = Mahasiswa::create($data);
 
             return response()->json([
                 'message' => 'Mahasiswa berhasil ditambah.',
-                'data' => $Mahasiswa
+                'data' => $mahasiswa
             ], 201);
         } catch (\Exception $e) {
+
             return response()->json([
-                'message' => 'Gagal menambah pengumuman',
+                'message' => 'Gagal menambah mahasiswa',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -70,16 +103,35 @@ class MahasiswaController extends Controller
         try {
             $Mahasiswa = Mahasiswa::findOrFail($nim);
 
-            $data = $request->validated(); // ambil data yang sudah divalidasi otomatis
+            $data = $request->validated();
+            // $data = $request->except('ortu');
 
-            if ($request->hasFile('foto')) {
-                if ($Mahasiswa->foto) {
-                    Storage::disk('public')->delete($Mahasiswa->foto);
+            foreach (['foto_profile' => 'gambar_mahasiswa/foto_profile', 'foto_ktp' => 'gambar_mahasiswa/foto_ktp', 'foto_ijasah' => 'gambar_mahasiswa/foto_ijasah', 'foto_transkip' => 'gambar_mahasiswa/foto_transkip', 'foto_kk' => 'gambar_mahasiswa/foto_kk', 'foto_ak' => 'gambar_mahasiswa/foto_ak', 'foto_sehat' => 'gambar_mahasiswa/foto_sehat', 'foto_warna' => 'gambar_mahasiswa/foto_warna'] as $field => $path) {
+                if ($request->hasFile($field)) {
+                    if (!empty($Mahasiswa->{$field})) {
+                        Storage::disk('public')->delete($Mahasiswa->{$field});
+                    }
+                    $data[$field] = $request->file($field)->store($path, 'public');
                 }
-                $data['foto'] = $request->file('foto')->store('gambar_mahasiswa', 'public');
             }
+        Log::info('Data update:', $data);
 
             $Mahasiswa->update($data);
+
+            // // Jika ada data 'ortu' pada request, update tabel orangtua
+            // if ($request->has('ortu')) {
+            //     $dataOrtu = $request->input('ortu');
+            //     $dataOrtu['nim'] = $Mahasiswa->nim; // pastikan nim mahasiswa dimasukkan
+
+            //     // Mengupdate data orang tua berdasarkan nim mahasiswa
+            //     $Ortu = OrangTua::where('nim', $Mahasiswa->nim)->first();
+            //     if ($Ortu) {
+            //         $Ortu->update($dataOrtu);
+            //     } else {
+            //         // Jika data orang tua tidak ditemukan, buat data baru (opsional)
+            //         OrangTua::create($dataOrtu);
+            //     }
+            // }
 
             return response()->json([
                 'message' => 'Mahasiswa berhasil diupdate.',
@@ -96,16 +148,30 @@ class MahasiswaController extends Controller
     // Menghapus data mahasiswa
     public function destroy($nim)
     {
-        $Mahasiswa = Mahasiswa::findOrFail($nim);
+        $Mahasiswa = Mahasiswa::with('ortu')->findOrFail($nim);
 
-        if ($Mahasiswa->foto) {
-            Storage::disk('public')->delete($Mahasiswa->foto);
+        foreach (
+            [
+                'foto_profile',
+                'foto_ktp',
+                'foto_ijasah',
+                'foto_transkip',
+                'foto_kk',
+                'foto_ak',
+                'foto_sehat',
+                'foto_warna'
+            ] as $field
+        ) {
+            if (!empty($Mahasiswa->{$field}) && Storage::disk('public')->exists($Mahasiswa->{$field})) {
+                Storage::disk('public')->delete($Mahasiswa->{$field});
+            }
         }
 
         $Mahasiswa->delete();
 
         return response()->json(['message' => 'Deleted']);
     }
+
 
     // mengupdate profile mahasiswa(khusus role mahasiswa)
     public function updateProfileMahasiswa(Request $request)

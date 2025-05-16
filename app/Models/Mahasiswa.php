@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -15,15 +16,49 @@ class Mahasiswa extends Model
 
 
     protected $fillable = [
-        'nim', 'nama_mhs', 'jk', 'tempat_lahir', 'tgl_lahir', 'id_prodi',
-        'kelas', 'nilai_masuk', 'thn_ak_masuk', 'thn_ak_lulus', 'ipk', 'email',
-        'handphone', 'alamat', 'id_status_aktif_mhs', 'foto',
+        'nim',
+        'id_kategori_spp',
+        'thn_ak_masuk',
+        'thn_ak_lulus',
+        'nama_mhs',
+        'nik_mhs',
+        'nisn',
+        'id_status_mhs',
+        'id_prodi',
+        'id_jk',
+        'id_darah',
+        'warga_negara',
+        'kebangsaan',
+        'tempat_lahir',
+        'tgl_lahir',
+        'id_agama',
+        'id_status_sipil',
+        'id_wil',
+        'id_kabupaten',
+        'id_prov',
+        'handphone',
+        'email',
+        'sekolah_asal',
+        'id_jurusan_sekolah',
+        'nilai_sekolah',
+        'tgl_lulus',
+        'IPK',
+        'foto_profile',
+        'foto_ktp',
+        'foto_ijasah',
+        'foto_transkip',
+        'foto_kk',
+        'foto_ak',
+        'foto_sehat',
+        'foto_warna',
     ];
-
-    // protected $casts = [
-    //     'nilai_masuk' => 'decimal:2',
-    //     'ipk' => 'decimal:2',
-    //     'tgl_lahir' => 'date',
-    // ];
-
+    
+    public function ortu()
+    {
+        return $this->hasOne(OrangTua::class, 'nim', 'nim');
+    }
+    public function status()
+    {
+        return $this->belongsTo(StatusMhs::class, 'id_status_mhs', 'id_status_mhs');
+    }
 }
