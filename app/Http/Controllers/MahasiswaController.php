@@ -16,10 +16,29 @@ use App\Http\Requests\UpdateMahasiswaRequest;
 class MahasiswaController extends Controller
 {
     // Menampilkan seluruh data mahasiswa
-    public function index()
+    public function index(Request $request)
     {
-        $Mahasiswas = Mahasiswa::with('status')->get();
+        // $Mahasiswas = Mahasiswa::with('status')->get();
+        // $query = Mahasiswa::query();
+        $query = Mahasiswa::with('status');
 
+
+        // filter data mahasiswa
+        $filters = [
+            'status' => 'id_status_mhs',
+            'prodi' => 'id_prodi',
+            'angkatan' => 'thn_ak_masuk',
+        ];
+
+        foreach ($filters as $param => $column) {
+            if ($request->filled($param)) {
+                $query->where($column, $request->input($param));
+            }
+        }
+
+        // $mahasiswa = $query->paginate(20);
+
+        $Mahasiswas = $query->get();
         foreach ($Mahasiswas as $Mahasiswa) {
             foreach (
                 [
@@ -33,7 +52,7 @@ class MahasiswaController extends Controller
                     'foto_warna'
                 ] as $field
             ) {
-                $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field}!== 'blm_ada_foto.png'
+                $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field} !== 'blm_ada_foto.png'
                     ? asset('storage/' . $Mahasiswa->{$field})
                     : asset('assets/default/blm_ada_foto.png');
             }
@@ -59,7 +78,7 @@ class MahasiswaController extends Controller
                 'foto_warna'
             ] as $field
         ) {
-            $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field}!== 'blm_ada_foto.png'
+            $Mahasiswa->{$field . '_url'} = $Mahasiswa->{$field} !== 'blm_ada_foto.png'
                 ? asset('storage/' . $Mahasiswa->{$field})
                 : asset('assets/default/blm_ada_foto.png');
         }
@@ -115,7 +134,7 @@ class MahasiswaController extends Controller
                     $data[$field] = $request->file($field)->store($path, 'public');
                 }
             }
-        Log::info('Data update:', $data);
+            Log::info('Data update:', $data);
 
             $Mahasiswa->update($data);
 
@@ -222,5 +241,11 @@ class MahasiswaController extends Controller
 
         return $StatusMhs;
     }
+    public function listMahasiswa()
+    {
+        $mahasiswa = Mahasiswa::select('nim', 'nama_mhs')->get();
 
+        return response()->json($mahasiswa);
+    }
+    
 }

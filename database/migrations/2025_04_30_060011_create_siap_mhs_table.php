@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siap_mhs', function (Blueprint $table) {
-           $table->string('nim', 16)->primary();
+            $table->string('nim', 16)->primary();
             $table->smallInteger('id_kategori_spp')->default(0); // id kategori spp
             $table->char('thn_ak_masuk', 5)->nullable();                        // tahun akademik masuk
             $table->char('thn_ak_lulus', 5)->nullable();                        // tahun akademik lulus
