@@ -59,11 +59,52 @@ class OrangTuaController extends Controller
     }
 
     // Menambah data orangtua
+    // public function store(StoreOrangTuaRequest $request)
+    // {
+    //     try {
+    //         $data = $request->validated();
+
+    //         $Orangtua = OrangTua::create($data);
+
+    //         return response()->json([
+    //             'message' => 'Orangtua berhasil ditambah.',
+    //             'data' => $Orangtua
+    //         ], 201);
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'message' => 'Gagal menambah Orangtua',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    // Menambah data orangtua
     public function store(StoreOrangTuaRequest $request)
     {
         try {
             $data = $request->validated();
 
+            // Ambil semua data ortu berdasarkan NIM
+            $existingOrtu = OrangTua::where('nim', $data['nim'])->get();
+
+            // 1. Cek apakah sudah punya 3 data ortu
+            if ($existingOrtu->count() >= 3) {
+                return response()->json([
+                    'message' => 'Setiap NIM hanya boleh memiliki maksimal 3 data orangtua (Ayah, Ibu, Wali).'
+                ], 422);
+            }
+
+            // 2. Cek apakah id_hubungan yang sama sudah ada untuk NIM tersebut
+            $duplicateHubungan = $existingOrtu->where('id_hubungan', $data['id_hubungan'])->first();
+
+            if ($duplicateHubungan) {
+                return response()->json([
+                    'message' => 'Setiap jenis hubungan (Ayah, Ibu, Wali) hanya boleh satu kali per NIM.'
+                ], 422);
+            }
+
+            // Lolos semua validasi → simpan data
             $Orangtua = OrangTua::create($data);
 
             return response()->json([
@@ -71,13 +112,15 @@ class OrangTuaController extends Controller
                 'data' => $Orangtua
             ], 201);
         } catch (\Exception $e) {
-
             return response()->json([
                 'message' => 'Gagal menambah Orangtua',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
+
+
     // Mengupdate data orangtua
     public function update(UpdateOrangTuaRequest $request, $id_ortu)
     {
@@ -118,5 +161,4 @@ class OrangTuaController extends Controller
             ], 500);
         }
     }
-    
 }
