@@ -18,8 +18,7 @@ class MahasiswaController extends Controller
     // Menampilkan seluruh data mahasiswa
     public function index(Request $request)
     {
-        // $Mahasiswas = Mahasiswa::with('status')->get();
-        // $query = Mahasiswa::query();
+       
         $query = Mahasiswa::with('status');
 
 
@@ -138,20 +137,7 @@ class MahasiswaController extends Controller
 
             $Mahasiswa->update($data);
 
-            // // Jika ada data 'ortu' pada request, update tabel orangtua
-            // if ($request->has('ortu')) {
-            //     $dataOrtu = $request->input('ortu');
-            //     $dataOrtu['nim'] = $Mahasiswa->nim; // pastikan nim mahasiswa dimasukkan
-
-            //     // Mengupdate data orang tua berdasarkan nim mahasiswa
-            //     $Ortu = OrangTua::where('nim', $Mahasiswa->nim)->first();
-            //     if ($Ortu) {
-            //         $Ortu->update($dataOrtu);
-            //     } else {
-            //         // Jika data orang tua tidak ditemukan, buat data baru (opsional)
-            //         OrangTua::create($dataOrtu);
-            //     }
-            // }
+     
 
             return response()->json([
                 'message' => 'Mahasiswa berhasil diupdate.',
@@ -243,7 +229,7 @@ class MahasiswaController extends Controller
     }
     public function listMahasiswa()
     {
-        $mahasiswa = Mahasiswa::select('nim', 'nama_mhs')->get();
+        $mahasiswa = Mahasiswa::select('nim', 'nama_mhs', 'thn_ak_masuk')->get();
 
         return response()->json($mahasiswa);
     }
