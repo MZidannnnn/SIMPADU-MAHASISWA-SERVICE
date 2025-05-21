@@ -229,7 +229,7 @@ class MahasiswaController extends Controller
     }
     public function listMahasiswa()
     {
-        $mahasiswa = Mahasiswa::select('nim', 'nama_mhs', 'thn_ak_masuk')->get();
+        $mahasiswa = Mahasiswa::select('nim', 'nama_mhs')->get();
 
         return response()->json($mahasiswa);
     }
