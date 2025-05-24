@@ -26,9 +26,9 @@ class UpdateOrangTuaRequest extends FormRequest
     {
         return [
             //
-            'nim' => 'sometimes|required|string|max:16|exists:siap_mhs,nim',
+            'nim' => 'sometimes|required|string|min:10|max:10|exists:siap_mhs,nim',
             'nama_ortu'        => 'sometimes|nullable|string|max:50',
-            'nik_ortu'         => 'sometimes|required|string|max:255',
+            'nik_ortu'         => 'sometimes|required|string|max:16|min:16',
             'id_agama'         => 'sometimes|nullable|integer',
             'id_pendidikan'    => 'sometimes|nullable|string|size:2',
             'id_pekerjaan'     => 'sometimes|nullable|string|size:1',

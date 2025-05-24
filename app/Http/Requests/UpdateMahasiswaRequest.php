@@ -28,13 +28,13 @@ class UpdateMahasiswaRequest extends FormRequest
 
         return [
            
-            'nim' => 'sometimes|required|string|max:16|unique:siap_mhs,nim,' . $this->route('nim') . ',nim',
+            'nim' => 'sometimes|required|string|min:10|max:10|unique:siap_mhs,nim,' . $this->route('nim') . ',nim',
             'id_kategori_spp' => 'sometimes|integer',
             'thn_ak_masuk' => 'sometimes|required|string|size:5',
             'thn_ak_lulus' => 'sometimes|required|string|size:5',
             'nama_mhs' => 'sometimes|required|string|max:145',
-            'nik_mhs' => 'nullable|string|max:255',
-            'nisn' => 'nullable|string|max:255',
+            'nik_mhs' => 'nullable|string|max:16|min:16',
+            'nisn' => 'nullable|string|max:16|min:16',
             'id_status_mhs' => 'nullable|string|size:1',
             'id_prodi' => 'nullable|integer',
             'id_jk' => 'nullable|integer',

@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siap_mhs', function (Blueprint $table) {
-            $table->string('nim', 16)->primary();
+            $table->char('nim', 10)->primary();
             $table->smallInteger('id_kategori_spp')->default(0); // id kategori spp
             $table->char('thn_ak_masuk', 5)->nullable();                        // tahun akademik masuk
             $table->char('thn_ak_lulus', 5)->nullable();                        // tahun akademik lulus
             $table->string('nama_mhs', 145);                        // nama mahasiswa
-            $table->string('nik_mhs', 255)->default(0);                        // nik mahasiswa
-            $table->string('nisn', 255);                        // nik mahasiswa
+            $table->char('nik_mhs', 16)->default(0);                        // nik mahasiswa
+            $table->char('nisn', 16);                        // nik mahasiswa
             $table->char('id_status_mhs', 1)->default('');                        // nik mahasiswa
             $table->tinyInteger('id_prodi');            // id_prodi (nullable)
             $table->smallInteger('id_jk')->nullable();                      // jenis kelamin (nullable)

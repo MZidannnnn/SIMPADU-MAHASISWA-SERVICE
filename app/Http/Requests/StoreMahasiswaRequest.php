@@ -28,13 +28,13 @@ class StoreMahasiswaRequest extends FormRequest
         // $nim = $this->route('mahasiswa'); // nim dari route parameter
         return [
             // Validasi untuk mahasiswa
-            'nim' => 'required|string|max:16|unique:siap_mhs,nim',
+            'nim' => 'required|string|min:10|max:10|unique:siap_mhs,nim',
             'id_kategori_spp' => 'required|integer',
             'thn_ak_masuk' => 'required|string|size:5',
             'thn_ak_lulus' => 'required|string|size:5',
             'nama_mhs' => 'required|string|max:145',
-            'nik_mhs' => 'nullable|string|max:255',
-            'nisn' => 'nullable|string|max:255',
+            'nik_mhs' => 'nullable|string|max:16|min:16',
+            'nisn' => 'nullable|string|max:16|min:16',
             'id_status_mhs' => 'nullable|string|size:1',
             'id_prodi' => 'nullable|integer',
             'id_jk' => 'nullable|integer',
