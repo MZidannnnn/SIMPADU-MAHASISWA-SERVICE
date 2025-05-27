@@ -28,7 +28,7 @@ class StoreOrangTuaRequest extends FormRequest
             //
             'nim' => 'required|string|min:10|max:10|exists:siap_mhs,nim',
             'nama_ortu'        => 'nullable|string|max:50',
-            'nik_ortu'         => 'required|string|max:16|min:16',
+            'nik_ortu'         => 'required|string|max:16|min:16|unique:orangtua,nik_ortu',
             'id_agama'         => 'nullable|integer',
             'id_pendidikan'    => 'nullable|string|size:2',
             'id_pekerjaan'     => 'nullable|string|size:1',

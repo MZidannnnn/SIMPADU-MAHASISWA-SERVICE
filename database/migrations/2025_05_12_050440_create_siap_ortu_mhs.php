@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->char('nim', 10); // FK ke mahasiswa (disarankan nanti relasi)
             $table->string('nama_ortu', 50)->nullable();
-            $table->char('nik_ortu', 16)->default('0');
+            $table->char('nik_ortu', 16)->default('0')->unique();
             $table->tinyInteger('id_agama')->nullable();
             $table->char('id_pendidikan', 2)->nullable();
             $table->char('id_pekerjaan', 1)->nullable();

@@ -28,7 +28,7 @@ class UpdateOrangTuaRequest extends FormRequest
             //
             'nim' => 'sometimes|required|string|min:10|max:10|exists:siap_mhs,nim',
             'nama_ortu'        => 'sometimes|nullable|string|max:50',
-            'nik_ortu'         => 'sometimes|required|string|max:16|min:16',
+            'nik_ortu'         => 'sometimes|required|string|max:16|min:16|unique:orangtua,nik_ortu,' . $this->route('orangtua') . ',id',
             'id_agama'         => 'sometimes|nullable|integer',
             'id_pendidikan'    => 'sometimes|nullable|string|size:2',
             'id_pekerjaan'     => 'sometimes|nullable|string|size:1',

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->char('thn_ak_masuk', 5)->nullable();                        // tahun akademik masuk
             $table->char('thn_ak_lulus', 5)->nullable();                        // tahun akademik lulus
             $table->string('nama_mhs', 145);                        // nama mahasiswa
-            $table->char('nik_mhs', 16)->default(0);                        // nik mahasiswa
-            $table->char('nisn', 16);                        // nik mahasiswa
+            $table->char('nik_mhs', 16)->default(0)->unique(); // nik mahasiswa unik, bukan primary
+            $table->char('nisn', 16)->unique();               // nisn juga unik, bukan primary
             $table->char('id_status_mhs', 1)->default('');                        // nik mahasiswa
             $table->tinyInteger('id_prodi');            // id_prodi (nullable)
             $table->smallInteger('id_jk')->nullable();                      // jenis kelamin (nullable)
