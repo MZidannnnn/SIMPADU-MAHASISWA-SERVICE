@@ -8,9 +8,9 @@ use App\Http\Controllers\PengumumanController;
 
 Route::get('/tes', fn () => 'API Tes OK!');
 
-Route::get('/docs/openapi', function () {
-    return response()->file(public_path('docs/openapi.yaml'));
-});
+// Route::get('/docs/openapi', function () {
+//     return response()->file(public_path('docs/openapi.yaml'));
+// });
 
 Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
 Route::get('/mahasiswa/orangtua/nim/{nim}', [OrangTuaController::class, 'showByNim']);
