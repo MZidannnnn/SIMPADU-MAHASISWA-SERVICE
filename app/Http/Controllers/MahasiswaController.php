@@ -154,6 +154,12 @@ class MahasiswaController extends Controller
     // Menghapus data mahasiswa
     public function destroy($nim)
     {
+ if (app()->environment('documentation')) {
+        return response()->json([
+            'message' => 'Simulasi: data tidak benar-benar dihapus.'
+        ], 200);
+    }
+
         $Mahasiswa = Mahasiswa::with('ortu')->findOrFail($nim);
 
         foreach (
