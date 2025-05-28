@@ -1,12 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Response;
 
 Route::get('/', function () {
-    return redirect('/swagger-ui/index.html');
+    return view('welcome');
 });
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
