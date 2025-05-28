@@ -9,7 +9,7 @@ info:
     name: Tim Backend
     email: support@kampus.ac.id
 servers:
-  - url: http://36.91.27.150:818/api
+  - url: 36.91.27.150:818/api
     
 
 tags:
