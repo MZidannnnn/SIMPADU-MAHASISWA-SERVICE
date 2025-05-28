@@ -1,0 +1,344 @@
+openapi: 3.0.1
+info:
+  title: Mahasiswa API
+  description: >
+    API untuk mengelola data mahasiswa di sistem kampus.
+    Mendukung operasi CRUD, filter, dan listing status.
+  version: 1.0.0
+  contact:
+    name: Tim Backend
+    email: support@kampus.ac.id
+servers:
+  - url: http://36.91.27.150:818/api
+    
+
+tags:
+  - name: Mahasiswa
+    description: Operasi CRUD dan listing mahasiswa
+  - name: Lookup
+    description: Endpoints lookup (status, daftar singkat)
+
+paths:
+  /mahasiswa:
+    get:
+      tags:
+        - Mahasiswa
+      operationId: listMahasiswa
+      summary: Ambil semua data mahasiswa
+      description: |
+        Mendukung filter berdasarkan:
+        - `status` (id_status_mhs)
+        - `prodi` (id_prodi)
+        - `angkatan` (thn_ak_masuk)
+      parameters:
+        - $ref: '#/components/parameters/FilterStatus'
+        - $ref: '#/components/parameters/FilterProdi'
+        - $ref: '#/components/parameters/FilterAngkatan'
+      responses:
+        '200':
+          description: Array of Mahasiswa objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mahasiswa'
+              examples:
+                sample:
+                  value:
+                    - nim: "12329369123"
+                      nama_mhs: "aryo"
+                      status:
+                        nama_status_mhs: "Aktif"
+    post:
+      tags:
+        - Mahasiswa
+      operationId: createMahasiswa
+      summary: Tambah mahasiswa baru
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoreMahasiswaRequest'
+      responses:
+        '201':
+          description: Mahasiswa berhasil ditambah
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponseMahasiswa'
+              examples:
+                success:
+                  value:
+                    message: "Mahasiswa berhasil ditambah."
+                    data:
+                      nim: "1232923"
+                      nama_mhs: "cahyo"
+                      created_at: "2025-05-18T02:54:35.000Z"
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /mahasiswa/{nim}:
+    parameters:
+      - $ref: '#/components/parameters/NimPath'
+    get:
+      tags:
+        - Mahasiswa
+      operationId: getMahasiswa
+      summary: Detail mahasiswa berdasarkan NIM
+      responses:
+        '200':
+          description: Mahasiswa object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mahasiswa'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Mahasiswa
+      operationId: replaceMahasiswa
+      summary: Update penuh data mahasiswa
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoreMahasiswaRequest'
+      responses:
+        '200':
+          description: Berhasil update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponseMahasiswa'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+        - Mahasiswa
+      operationId: updateMahasiswa
+      summary: Update sebagian data mahasiswa
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateMahasiswaRequest'
+      responses:
+        '200':
+          $ref: '#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/200'
+        '422':
+          $ref: '#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/422'
+        '404':
+          $ref: '#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/404'
+    delete:
+      tags:
+        - Mahasiswa
+      operationId: deleteMahasiswa
+      summary: Hapus mahasiswa
+      responses:
+        '200':
+          description: Berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /mahasiswa/list_mahasiswa:
+    get:
+      tags:
+        - Lookup
+      operationId: listMahasiswaMinimal
+      summary: Daftar ringkas mahasiswa
+      description: Hanya NIM dan nama
+      responses:
+        '200':
+          description: Array of { nim, nama_mhs }
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MahasiswaListItem'
+
+  /status_mhs:
+    get:
+      tags:
+        - Lookup
+      operationId: listStatusMahasiswa
+      summary: Daftar status mahasiswa
+      responses:
+        '200':
+          description: Array of status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusMhs'
+
+components:
+  parameters:
+    NimPath:
+      name: nim
+      in: path
+      required: true
+      schema:
+        type: string
+      description: NIM unik mahasiswa
+    FilterStatus:
+      name: status
+      in: query
+      schema:
+        type: string
+      description: Filter by id_status_mhs
+    FilterProdi:
+      name: prodi
+      in: query
+      schema:
+        type: integer
+      description: Filter by id_prodi
+    FilterAngkatan:
+      name: angkatan
+      in: query
+      schema:
+        type: string
+      description: Filter by thn_ak_masuk
+
+  responses:
+    ValidationError:
+      description: Validasi gagal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    NotFound:
+      description: Resource tidak ditemukan
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Not Found"
+    InternalError:
+      description: Error server internal
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal Server Error"
+
+  schemas:
+    Mahasiswa:
+      type: object
+      properties:
+        nim:
+          type: string
+          example: "12329369123"
+        nama_mhs:
+          type: string
+          example: "aryo"
+        id_status_mhs:
+          type: string
+          example: "A"
+        status:
+          $ref: '#/components/schemas/StatusMhs'
+        foto_profile_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MahasiswaListItem:
+      type: object
+      properties:
+        nim:
+          type: string
+          example: "1232923"
+        nama_mhs:
+          type: string
+          example: "cahyo"
+
+    StatusMhs:
+      type: object
+      properties:
+        id_status_mhs:
+          type: string
+          example: "A"
+        nama_status_mhs:
+          type: string
+          example: "Aktif"
+
+    StoreMahasiswaRequest:
+      type: object
+      required:
+        - nim
+        - id_kategori_spp
+        - thn_ak_masuk
+        - thn_ak_lulus
+        - nama_mhs
+        - id_wil
+      properties:
+        nim:
+          type: string
+        id_kategori_spp:
+          type: integer
+        thn_ak_masuk:
+          type: string
+        thn_ak_lulus:
+          type: string
+        nama_mhs:
+          type: string
+        id_wil:
+          type: string
+        foto_profile:
+          type: string
+          format: binary
+        # ... (lainnya sama seperti sebelumnya)
+
+    UpdateMahasiswaRequest:
+      allOf:
+        - $ref: '#/components/schemas/StoreMahasiswaRequest'
+      description: Semua field bersifat optional untuk patch
+
+    SuccessResponseMahasiswa:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Mahasiswa'
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
