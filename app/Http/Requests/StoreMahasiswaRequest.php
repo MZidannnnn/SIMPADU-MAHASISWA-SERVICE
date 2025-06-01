@@ -30,8 +30,8 @@ class StoreMahasiswaRequest extends FormRequest
             // Validasi untuk mahasiswa
             'nim' => 'required|string|min:10|max:10|unique:siap_mhs,nim',
             'id_kategori_spp' => 'required|integer',
-            'thn_ak_masuk' => 'required|string|size:5',
-            'thn_ak_lulus' => 'required|string|size:5',
+            'thn_ak_masuk' => 'nullable|string|size:5',
+            'thn_ak_lulus' => 'nullable|string|size:5',
             'nama_mhs' => 'required|string|max:145',
             'nik_mhs' => 'nullable|string|max:16|min:16|unique:siap_mhs,nik_mhs',
             'nisn' => 'nullable|string|max:16|min:16|unique:siap_mhs,nisn',
@@ -55,7 +55,7 @@ class StoreMahasiswaRequest extends FormRequest
             'nilai_sekolah' => 'nullable|numeric',
             'tgl_lulus' => 'nullable|date',
             'IPK' => 'nullable|numeric|between:0,4',
-            'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'id_status_peringatan' => 'nullable|string|size:1',
             'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_ijasah' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_transkip' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -63,31 +63,6 @@ class StoreMahasiswaRequest extends FormRequest
             'foto_ak' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_sehat' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_warna' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-
-            // Validasi untuk data orangtua (ortu)
-            // 'ortu' => 'nullable|array',
-            // 'ortu.nama_ayah' => 'nullable|string|max:50',
-            // 'ortu.nik_ayah' => 'nullable|string|max:255',
-            // 'ortu.id_agama_ayah' => 'nullable|integer',
-            // 'ortu.id_pendidikan_ayah' => 'nullable|string|max:2',
-            // 'ortu.id_pekerjaan_ayah' => 'nullable|string|max:1',
-            // 'ortu.id_status_hidup_ayah' => 'nullable|string|max:1',
-            // 'ortu.nama_ibu' => 'nullable|string|max:50',
-            // 'ortu.nik_ibu' => 'nullable|string|max:255',
-            // 'ortu.id_agama_ibu' => 'nullable|integer',
-            // 'ortu.id_pendidikan_ibu' => 'nullable|string|max:2',
-            // 'ortu.id_pekerjaan_ibu' => 'nullable|string|max:1',
-            // 'ortu.id_status_hidup_ibu' => 'nullable|string|max:1',
-            // 'ortu.penghasilan_ayah' => 'nullable|integer',
-            // 'ortu.penghasilan_ibu' => 'nullable|integer',
-            // 'ortu.id_kabupaten_ortu' => 'nullable|string|size:10',
-            // 'ortu.id_prov_ortu' => 'nullable|string|size:2',
-            // 'ortu.negara_ortu' => 'nullable|string|max:50',
-            // 'ortu.handphone_ortu' => 'nullable|string|max:50',
-            // 'ortu.email_ortu' => 'nullable|string|email|max:100',
-            // 'ortu.tgl_lahir_ayah' => 'nullable|date',
-            // 'ortu.tgl_lahir_ibu' => 'nullable|date',
-
         ];
     }
     protected function failedValidation(Validator $validator)

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siap_ortu_mhs', function (Blueprint $table) {
-            $table->id('id_ortu'); // PRIMARY KEY, AUTO_INCREMENT
+            $table->integer('id_ortu')->primary()->autoIncrement(); // PRIMARY KEY, AUTO_INCREMENT
 
             $table->char('nim', 10); // FK ke mahasiswa (disarankan nanti relasi)
             $table->string('nama_ortu', 50)->nullable();

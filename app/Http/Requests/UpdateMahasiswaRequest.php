@@ -36,6 +36,7 @@ class UpdateMahasiswaRequest extends FormRequest
             'nik_mhs' => 'nullable|string|max:16|min:16 |unique:siap_mhs,nik_mhs,' . $this->route('nim') . ',nim',
             'nisn' => 'nullable|string|max:16|min:16|unique:siap_mhs,nisn,' . $this->route('nim') . ',nim',
             'id_status_mhs' => 'nullable|string|size:1',
+            'id_status_peringatan' => 'nullable|string|size:1',
             'id_prodi' => 'nullable|integer',
             'id_jk' => 'nullable|integer',
             'id_darah' => 'nullable|integer',

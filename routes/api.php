@@ -6,41 +6,31 @@ use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengumumanController;
 
+// tes api
 Route::get('/tes', fn () => 'API Tes OK!');
 
-Route::get('/docs/openapi', function () {
-    return response()->file(public_path('docs/openapi.yaml'));
-});
-
-Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
-Route::get('/mahasiswa/orangtua/nim/{nim}', [OrangTuaController::class, 'showByNim']);
-
+// CRUD orangtua,store,put,show,delete,get
 Route::apiResource('/mahasiswa/orangtua', OrangTuaController::class);
+
+// CRUD pengumuman,store,put,show,delete,get
 Route::apiResource('pengumuman', PengumumanController::class);
 
-Route::apiResource('mahasiswa', MahasiswaController::class)->parameters([
-     'mahasiswa' => 'nim',
-]);
 
-
-
-
-// List semua mahasiswa
-// Route::get('/mahasiswa', [MahasiswaController::class, 'index']);
-
+// Route::apiResource('mahasiswa', MahasiswaController::class)->parameters([
+    //      'mahasiswa' => 'nim',
+    // ]);
+    
+// tampilkan nim,dan nama seluru mahasiswa
+Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
 // Tampilkan detail mahasiswa
-// Route::get('/mahasiswa/{nim}', [MahasiswaController::class, 'show']);
-
+Route::get('/mahasiswa/{nim}', [MahasiswaController::class, 'show']);
 // Tambah mahasiswa
-// Route::post('/mahasiswa', [MahasiswaController::class, 'store']);
-
+Route::post('/mahasiswa', [MahasiswaController::class, 'store']);
 // Update mahasiswa
-// Route::put('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
-// Route::patch('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
-
+Route::put('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
+Route::patch('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
 // Hapus mahasiswa
-// Route::delete('/mahasiswa/{nim}', [MahasiswaController::class, 'destroy']);
+Route::delete('/mahasiswa/{nim}', [MahasiswaController::class, 'destroy']);
 
-// Route::put('/mahasiswa/profile/update', [MahasiswaController::class, 'updateProfileMahasiswa']);
 Route::get('/status_mhs', [MahasiswaController::class, 'DaftarStatusMahasiswa']);
 

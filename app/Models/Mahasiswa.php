@@ -43,7 +43,7 @@ class Mahasiswa extends Model
         'nilai_sekolah',
         'tgl_lulus',
         'IPK',
-        'foto_profile',
+        'id_status_peringatan',
         'foto_ktp',
         'foto_ijasah',
         'foto_transkip',
@@ -52,7 +52,7 @@ class Mahasiswa extends Model
         'foto_sehat',
         'foto_warna',
     ];
-    
+
     public function ortu()
     {
         return $this->hasOne(OrangTua::class, 'nim', 'nim');
@@ -60,5 +60,9 @@ class Mahasiswa extends Model
     public function status()
     {
         return $this->belongsTo(StatusMhs::class, 'id_status_mhs', 'id_status_mhs');
+    }
+    public function peringatan()
+    {
+        return $this->belongsTo(PeringatanMhs::class, 'id_status_peringatan', 'id_status_peringatan');
     }
 }
