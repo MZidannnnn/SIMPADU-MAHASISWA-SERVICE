@@ -9,6 +9,8 @@ class PeringatanMhs extends Model
     //
     protected $table = 'siap_peringatan_mhs';
     protected $primaryKey = 'id_status_peringatan';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'id_status_peringatan',

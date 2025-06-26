@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\StatusMhs;
-use Illuminate\Http\Response;
 use App\Http\Requests\StoreStatusMhsRequest;
 use App\Http\Requests\UpdateStatusMhsRequest;
 
