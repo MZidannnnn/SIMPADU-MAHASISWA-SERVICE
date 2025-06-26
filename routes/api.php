@@ -1,10 +1,9 @@
 <?php
-use App\Models\OrangTua;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\StatusMhsController;
 
 // Route::middleware('has.token')->group(function () {
     // });
@@ -13,8 +12,6 @@ use App\Http\Controllers\PengumumanController;
 Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
 // CRUD orangtua,store,put,show,delete,get
 Route::apiResource('/mahasiswa/orangtua', OrangTuaController::class);
-// CRUD pengumuman,store,put,show,delete,get
-Route::apiResource('pengumuman', PengumumanController::class);
 // Tampilkan detail mahasiswa
 Route::get('/mahasiswa/{nim}', [MahasiswaController::class, 'show']);
 // Tambah mahasiswa
@@ -24,4 +21,14 @@ Route::put('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
 Route::patch('/mahasiswa/{nim}', [MahasiswaController::class, 'update']);
 // Hapus mahasiswa
 Route::delete('/mahasiswa/{nim}', [MahasiswaController::class, 'destroy']);
-Route::get('/status_mhs', [MahasiswaController::class, 'DaftarStatusMahasiswa']);
+//  CRUD status status_mhs
+Route::get('/status_mhs', [StatusMhsController::class, 'index']);
+// Tampilkan detail status_mhs
+Route::get('/status_mhs/{id_status_mhs}', [StatusMhsController::class, 'show']);
+// Tambah status_mhs
+Route::post('/status_mhs', [StatusMhsController::class, 'store']);
+// Update status_mhs
+Route::put('/status_mhs/{id_status_mhs}', [StatusMhsController::class, 'update']);
+Route::patch('/status_mhs/{id_status_mhs}', [StatusMhsController::class, 'update']);
+// Hapus status_mhs
+Route::delete('/status_mhs/{id_status_mhs}', [StatusMhsController::class, 'destroy']);

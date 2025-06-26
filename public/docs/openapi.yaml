@@ -1,9 +1,8 @@
 openapi: 3.1.0
 info:
-  title: API Mahasiswa
+  title: API SIMPADU SERVICE MAHASISWA
   description: >
-    API untuk mengelola data mahasiswa di sistem kampus.
-    Mendukung operasi CRUD data Mahasiswa.
+    Dokumentasi API SIMPADU SERVICE MAHASISWA
   version: 1.0.0
 servers:
   - url: https://ti054d03.agussbn.my.id/api
@@ -50,7 +49,7 @@ paths:
       tags:
         - Mahasiswa
       operationId: replaceMahasiswa
-      summary: Update penuh data mahasiswa
+      summary: Update data mahasiswa
       requestBody:
         required: true
         content:
@@ -72,7 +71,7 @@ paths:
       tags:
         - Mahasiswa
       operationId: updateMahasiswa
-      summary: Update sebagian data mahasiswa
+      summary: Update data mahasiswa
       requestBody:
         required: true
         content:
@@ -90,7 +89,7 @@ paths:
       tags:
         - Mahasiswa
       operationId: deleteMahasiswa
-      summary: Hapus mahasiswa
+      summary: Hapus data mahasiswa
       responses:
         "200":
           description: Berhasil dihapus
@@ -105,10 +104,14 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+tags:
+  - name: Status Mahasiswa
+    description: Operasi CRUD Status Mahasiswa
+    paths:
   /status_mhs:
     get:
       tags:
-        - Mahasiswa
+        - Status Mahasiswa
       operationId: listStatusMahasiswa
       summary: Daftar status mahasiswa
       responses:

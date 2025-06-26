@@ -24,7 +24,7 @@ class UpdateMahasiswaRequest extends FormRequest
      */
     public function rules(): array
     {
-        // $nim = $this->route('mahasiswa'); // nim dari route parameter
+      
 
         return [
            

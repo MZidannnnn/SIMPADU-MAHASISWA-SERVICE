@@ -9,6 +9,7 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',
         'https://ti054d04.agussbn.my.id',
+        'https://ti054d03.agussbn.my.id',
         'https://ti054d02.agussbn.my.id',
         'https://ti054d01.agussbn.my.id',
     ],
