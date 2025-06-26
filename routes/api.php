@@ -7,14 +7,24 @@ use App\Http\Controllers\PeringatanMhsController;
 use App\Http\Controllers\StatusMhsController;
 
 // Route::middleware('has.token')->group(function () {
-    // });
-    
+// });
+
+// CRUD orangtua
+Route::get('/mahasiswa/orangtua', [OrangTuaController::class, 'index']);
+// Tampilkan detail orangtua
+Route::get('/mahasiswa/orangtua/{id_ortu}', [OrangTuaController::class, 'show']);
+// Tambah orangtua
+Route::post('/mahasiswa/orangtua', [OrangTuaController::class, 'store']);
+// Update orangtua
+Route::put('/mahasiswa/orangtua/{id_ortu}', [OrangTuaController::class, 'update']);
+Route::patch('/mahasiswa/orangtua/{id_ortu}', [OrangTuaController::class, 'update']);
+// Hapus orangtua
+Route::delete('/mahasiswa/orangtua/{id_ortu}', [OrangTuaController::class, 'destroy']);
+
 
 // CRUD Mahasiswa
 // tampilkan nim,dan nama seluru mahasiswa
 Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
-// CRUD orangtua,store,put,show,delete,get
-Route::apiResource('/mahasiswa/orangtua', OrangTuaController::class);
 // Tampilkan detail mahasiswa
 Route::get('/mahasiswa/{nim}', [MahasiswaController::class, 'show']);
 // Tambah mahasiswa

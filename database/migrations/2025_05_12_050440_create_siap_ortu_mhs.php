@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('siap_ortu_mhs', function (Blueprint $table) {
             $table->integer('id_ortu')->primary()->autoIncrement(); // PRIMARY KEY, AUTO_INCREMENT
 
-            $table->char('nim', 10); // FK ke mahasiswa (disarankan nanti relasi)
+            $table->char('nim', 10); // FK ke mahasiswa 
             $table->string('nama_ortu', 50)->nullable();
             $table->char('nik_ortu', 16)->default('0')->unique();
             $table->tinyInteger('id_agama')->nullable();

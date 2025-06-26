@@ -59,27 +59,6 @@ class OrangTuaController extends Controller
     }
 
     // Menambah data orangtua
-    // public function store(StoreOrangTuaRequest $request)
-    // {
-    //     try {
-    //         $data = $request->validated();
-
-    //         $Orangtua = OrangTua::create($data);
-
-    //         return response()->json([
-    //             'message' => 'Orangtua berhasil ditambah.',
-    //             'data' => $Orangtua
-    //         ], 201);
-    //     } catch (\Exception $e) {
-
-    //         return response()->json([
-    //             'message' => 'Gagal menambah Orangtua',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    // Menambah data orangtua
     public function store(StoreOrangTuaRequest $request)
     {
         try {
@@ -128,7 +107,26 @@ class OrangTuaController extends Controller
             $Orangtua = Orangtua::findOrFail($id_ortu);
 
             $data = $request->validated();
+            
+                        // Cek apakah user mencoba mengubah id_hubungan
+            if (isset($data['id_hubungan']) && $data['id_hubungan'] != $Orangtua->id_hubungan) {
 
+                // Ambil NIM dari data yang ada, atau dari request jika NIM juga diubah
+                $nim = $data['nim'] ?? $Orangtua->nim;
+
+                // Cek apakah id_hubungan yang baru sudah ada untuk NIM tersebut,
+                // dengan mengabaikan data yang sedang kita update saat ini.
+                $duplicateHubungan = OrangTua::where('nim', $nim)
+                                             ->where('id_hubungan', $data['id_hubungan'])
+                                             ->where('id_ortu', '!=', $id_ortu) // Poin penting: abaikan baris ini
+                                             ->first();
+
+                if ($duplicateHubungan) {
+                    return response()->json([
+                        'message' => 'Setiap jenis hubungan (Ayah, Ibu, Wali) hanya boleh satu kali per NIM.'
+                    ], 422);
+                }
+            }
             $Orangtua->update($data);
 
             return response()->json([
