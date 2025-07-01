@@ -11,30 +11,16 @@ class OrangTuaController extends Controller
 {
     //
     // tampilkan semua data ortu
-    public function index(Request $request)
-    {
-        $query = OrangTua::with('mahasiswa');
+public function index(Request $request)
+{
+    $data = OrangTua::with(['mahasiswa' => function ($query) {
+        $query->select('nim', 'nama_mhs');
+    }])
+    ->select('id_ortu', 'nim', 'nama_ortu', 'id_hubungan') // These are columns from the 'orang_tua' table.
+    ->get();
 
-        // filter data ortu
-        $filters = [
-            'penghasilan' => 'id_penghasilan',
-            'pekerjaan' => 'id_pekerjaan',
-            'agama' => 'id_agama',
-            'pendidikan' => 'id_pendidikan',
-            'status_hidup' => 'id_status_hidup',
-            'hubungan' => 'id_hubungan',
-        ];
-
-        foreach ($filters as $param => $column) {
-            if ($request->filled($param)) {
-                $query->where($column, $request->input($param));
-            }
-        }
-
-        $Orangtua = $query->get();
-
-        return $Orangtua;
-    }
+    return response()->json($data);
+}
 
     // Menampilkan data orangtua berdasarkan nim
     public function show($id_ortu)

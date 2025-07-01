@@ -55,7 +55,7 @@ class Mahasiswa extends Model
 
     public function ortu()
     {
-        return $this->hasOne(OrangTua::class, 'nim', 'nim');
+        return $this->hasmany(OrangTua::class, 'nim', 'nim');
     }
     public function status()
     {

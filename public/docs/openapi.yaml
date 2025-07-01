@@ -2,43 +2,83 @@ openapi: 3.1.0
 info:
   title: API SIMPADU SERVICE MAHASISWA
   description: >
-    Dokumentasi API SIMPADU SERVICE MAHASISWA
+    Dokumentasi API SIMPADU SERVICE MAHASISWA || backend Laravel 12.
   version: 1.0.0
 servers:
   - url: https://ti054d03.agussbn.my.id/api
+    description: Production Server
+  - url: http://127.0.0.1:8000/api
+    description: Local Development Server
 
 tags:
   - name: Mahasiswa
-    description: Operasi CRUD
+    description: Operasi terkait data Mahasiswa.
+  - name: Orang Tua
+    description: Operasi terkait data Orang Tua Mahasiswa.
+  - name: Status Mahasiswa
+    description: Operasi terkait data  Status Mahasiswa.
+  - name: Peringatan Mahasiswa
+    description: Operasi terkait data  Peringatan Mahasiswa.
 
 paths:
+  # ================= MAHASISWA ENDPOINTS =================
+  /mahasiswa:
+    post:
+      tags:
+        - Mahasiswa
+      operationId: storeMahasiswa
+      summary: Tambah Mahasiswa Baru
+      description: Menambahkan data mahasiswa baru ke dalam sistem.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/StoreMahasiswaRequest"
+      responses:
+        "201":
+          description: Mahasiswa berhasil ditambah.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseStoreMahasiswa"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
   /mahasiswa/list_mahasiswa:
     get:
       tags:
         - Mahasiswa
       operationId: listMahasiswaMinimal
-      summary: Daftar Seluruh mahasiswa
-      description: Hanya NIM dan nama
+      summary: Daftar Seluruh Mahasiswa 
+      description: Mengambil daftar semua mahasiswa hanya dengan NIM dan nama.
       responses:
         "200":
-          description: Array of { nim, nama_mhs }
+          description: Berhasil mengambil daftar mahasiswa.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/MahasiswaListItem"
+                example:
+                  - nim: "C000000000"
+                    nama_mhs: "Dappa Mobile"
+                  - nim: "C000000001"
+                    nama_mhs: "Ari Laravel"
+
   /mahasiswa/{nim}:
     parameters:
       - $ref: "#/components/parameters/NimPath"
     get:
       tags:
         - Mahasiswa
-      operationId: getMahasiswa
-      summary: Detail mahasiswa berdasarkan NIM
+      operationId: getMahasiswaByNim
+      summary: Detail Mahasiswa Berdasarkan NIM
+      description: Mengambil data lengkap seorang mahasiswa beserta relasi (status, peringatan, ortu).
       responses:
         "200":
-          description: Mahasiswa object
+          description: Data mahasiswa ditemukan.
           content:
             application/json:
               schema:
@@ -48,30 +88,32 @@ paths:
     put:
       tags:
         - Mahasiswa
-      operationId: replaceMahasiswa
-      summary: Update data mahasiswa
+      operationId: updateMahasiswa
+      summary: Update Data Mahasiswa
+      description: Memperbarui data mahasiswa yang ada. . Endpoint ini menangani metode PUT dan PATCH.
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/StoreMahasiswaRequest"
+              $ref: "#/components/schemas/UpdateMahasiswaRequest"
       responses:
         "200":
-          description: Berhasil update
+          description: Berhasil update data mahasiswa.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SuccessResponseMahasiswa"
-        "422":
-          $ref: "#/components/responses/ValidationError"
+                $ref: "#/components/schemas/SuccessResponseUpdateMahasiswa"
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
     patch:
       tags:
         - Mahasiswa
-      operationId: updateMahasiswa
-      summary: Update data mahasiswa
+      operationId: patchMahasiswa
+      summary: Update Data Mahasiswa 
+      description: Memperbarui data mahasiswa yang ada. .
       requestBody:
         required: true
         content:
@@ -81,18 +123,19 @@ paths:
       responses:
         "200":
           $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/200"
-        "422":
-          $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/422"
         "404":
           $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/404"
+        "422":
+          $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/422"
     delete:
       tags:
         - Mahasiswa
       operationId: deleteMahasiswa
-      summary: Hapus data mahasiswa
+      summary: Hapus Data Mahasiswa
+      description: Menghapus data mahasiswa berdasarkan NIM.
       responses:
         "200":
-          description: Berhasil dihapus
+          description: Berhasil dihapus.
           content:
             application/json:
               schema:
@@ -100,29 +143,324 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Deleted
+                    example: "Data Berhasil Dihapus"
         "404":
           $ref: "#/components/responses/NotFound"
 
-tags:
-  - name: Status Mahasiswa
-    description: Operasi CRUD Status Mahasiswa
-    paths:
+  # ================= ORANG TUA ENDPOINTS =================
+  /mahasiswa/orangtua:
+    get:
+      tags:
+        - Orang Tua
+      operationId: listOrangTua
+      summary: Daftar Seluruh Orang Tua
+      description: Mengambil daftar semua orang tua beserta data minimal mahasiswa terkait.
+      responses:
+        "200":
+          description: Berhasil mengambil daftar orang tua.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrangTuaListItem"
+    post:
+      tags:
+        - Orang Tua
+      operationId: storeOrangTua
+      summary: Tambah Data Orang Tua
+      description: Menambahkan data orang tua baru untuk seorang mahasiswa. NIM tidak boleh memiliki lebih dari 3 orang tua (Ayah, Ibu, Wali) dan id_hubungan harus unik per NIM.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreOrangTuaRequest"
+      responses:
+        "201":
+          description: Berhasil menambah data orang tua.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseOrangTua"
+        "422":
+          description: Validasi gagal atau aturan bisnis dilanggar (misal duplikat hubungan orang tua).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+  /mahasiswa/orangtua/{id_ortu}:
+    parameters:
+      - $ref: "#/components/parameters/IdOrtuPath"
+    get:
+      tags:
+        - Orang Tua
+      operationId: getOrangTuaById
+      summary: Detail Orang Tua
+      description: Mengambil data lengkap orang tua berdasarkan ID uniknya.
+      responses:
+        "200":
+          description: Data orang tua ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrangTua"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Orang Tua
+      operationId: updateOrangTua
+      summary: Update Data Orang Tua
+      description: Memperbarui data orang tua berdasarkan ID uniknya. Endpoint ini menangani PUT dan PATCH.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrangTuaRequest"
+      responses:
+        "200":
+          description: Berhasil update data orang tua.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseOrangTua"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    patch:
+      tags:
+        - Orang Tua
+      operationId: patchOrangTua
+      summary: Update Data Orang Tua 
+      description: Memperbarui data orang tua berdasarkan ID uniknya.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrangTuaRequest"
+      responses:
+        "200":
+          $ref: "#/paths/~1mahasiswa~1orangtua~1%7Bid_ortu%7D/put/responses/200"
+        "404":
+          $ref: "#/paths/~1mahasiswa~1orangtua~1%7Bid_ortu%7D/put/responses/404"
+        "422":
+          $ref: "#/paths/~1mahasiswa~1orangtua~1%7Bid_ortu%7D/put/responses/422"
+    delete:
+      tags:
+        - Orang Tua
+      operationId: deleteOrangTua
+      summary: Hapus Data Orang Tua
+      description: Menghapus data orang tua berdasarkan ID uniknya.
+      responses:
+        "200":
+          description: Berhasil dihapus.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Orangtua berhasil dihapus."
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ================= STATUS MAHASISWA ENDPOINTS =================
   /status_mhs:
     get:
       tags:
         - Status Mahasiswa
       operationId: listStatusMahasiswa
-      summary: Daftar status mahasiswa
+      summary: Daftar Semua Status Mahasiswa
+      description: Mengambil seluruh data  status mahasiswa.
       responses:
         "200":
-          description: Array of status
+          description: Berhasil mengambil daftar status.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/StatusMhs"
+    post:
+      tags:
+        - Status Mahasiswa
+      operationId: storeStatusMahasiswa
+      summary: Tambah Status Mahasiswa Baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreStatusMhsRequest"
+      responses:
+        "201":
+          description: Berhasil menambah data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseStatusMhs"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /status_mhs/{id_status_mhs}:
+    parameters:
+      - $ref: "#/components/parameters/IdStatusMhsPath"
+    get:
+      tags:
+        - Status Mahasiswa
+      operationId: getStatusMahasiswaById
+      summary: Detail Status Mahasiswa
+      responses:
+        "200":
+          description: Data ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusMhs"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Status Mahasiswa
+      operationId: updateStatusMahasiswa
+      summary: Update Status Mahasiswa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusMhsRequest"
+      responses:
+        "200":
+          description: Berhasil diupdate.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseStatusMhs"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    delete:
+      tags:
+        - Status Mahasiswa
+      operationId: deleteStatusMahasiswa
+      summary: Hapus Status Mahasiswa
+      responses:
+        "200":
+          description: Berhasil dihapus.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Data berhasil dihapus."
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ================= PERINGATAN MAHASISWA ENDPOINTS =================
+  /peringatan_mhs:
+    get:
+      tags:
+        - Peringatan Mahasiswa
+      operationId: listPeringatanMahasiswa
+      summary: Daftar Semua Peringatan Mahasiswa
+      description: Mengambil seluruh data  peringatan mahasiswa.
+      responses:
+        "200":
+          description: Berhasil mengambil daftar peringatan.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PeringatanMhs"
+    post:
+      tags:
+        - Peringatan Mahasiswa
+      operationId: storePeringatanMahasiswa
+      summary: Tambah Peringatan Mahasiswa Baru
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StorePeringatanMhsRequest"
+      responses:
+        "201":
+          description: Berhasil menambah data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponsePeringatanMhs"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /peringatan_mhs/{id_status_peringatan}:
+    parameters:
+      - $ref: "#/components/parameters/IdStatusPeringatanPath"
+    get:
+      tags:
+        - Peringatan Mahasiswa
+      operationId: getPeringatanMahasiswaById
+      summary: Detail Peringatan Mahasiswa
+      responses:
+        "200":
+          description: Data ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PeringatanMhs"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Peringatan Mahasiswa
+      operationId: updatePeringatanMahasiswa
+      summary: Update Peringatan Mahasiswa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePeringatanMhsRequest"
+      responses:
+        "200":
+          description: Berhasil diupdate.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponsePeringatanMhs"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    delete:
+      tags:
+        - Peringatan Mahasiswa
+      operationId: deletePeringatanMahasiswa
+      summary: Hapus Peringatan Mahasiswa
+      responses:
+        "200":
+          description: Berhasil dihapus.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Data berhasil dihapus."
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   parameters:
@@ -132,35 +470,42 @@ components:
       required: true
       schema:
         type: string
-      description: NIM unik mahasiswa
-    FilterStatus:
-      name: status
-      in: query
-      schema:
-        type: string
-      description: Filter by id_status_mhs
-    FilterProdi:
-      name: prodi
-      in: query
+        example: "C000000000"
+      description: NIM unik mahasiswa (10 karakter).
+    IdOrtuPath:
+      name: id_ortu
+      in: path
+      required: true
       schema:
         type: integer
-      description: Filter by id_prodi
-    FilterAngkatan:
-      name: angkatan
-      in: query
+        example: 1
+      description: ID unik Orang Tua.
+    IdStatusMhsPath:
+      name: id_status_mhs
+      in: path
+      required: true
       schema:
         type: string
-      description: Filter by thn_ak_masuk
+        example: "A"
+      description: ID unik Status Mahasiswa (1 karakter).
+    IdStatusPeringatanPath:
+      name: id_status_peringatan
+      in: path
+      required: true
+      schema:
+        type: string
+        example: "C"
+      description: ID unik Status Peringatan (1 karakter).
 
   responses:
     ValidationError:
-      description: Validasi gagal
+      description: Validasi gagal.
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ValidationError"
     NotFound:
-      description: Resource tidak ditemukan
+      description: Resource tidak ditemukan.
       content:
         application/json:
           schema:
@@ -168,52 +513,235 @@ components:
             properties:
               message:
                 type: string
-                example: "Not Found"
-    InternalError:
-      description: Error server internal
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "Internal Server Error"
+            example:
+              message: "No query results for model [App\\Models\\Mahasiswa] C000000099"
 
   schemas:
+    # ========= MODEL SCHEMAS (BLOCK STYLE) =========
     Mahasiswa:
       type: object
+      description: Representasi data lengkap seorang mahasiswa.
       properties:
         nim:
           type: string
-          example: "12329369123"
+          example: "C000000000"
+        id_kategori_spp:
+          type: integer
+          example: 7
+        thn_ak_masuk:
+          type: string
+          example: "20201"
+        thn_ak_lulus:
+          type: string
+          example: "20251"
         nama_mhs:
           type: string
-          example: "aryo"
+          example: "Dappa Mobile"
+        nik_mhs:
+          type: string
+          example: "3271021230864311"
+        nisn:
+          type: string
+          example: "1234567890987654"
         id_status_mhs:
           type: string
           example: "A"
-        status:
-          $ref: "#/components/schemas/StatusMhs"
-        foto_profile_url:
+        id_prodi:
+          type: integer
+          example: 9
+        id_jk:
+          type: integer
+          example: 9
+        id_darah:
+          type: integer
+          example: 99
+        warga_negara:
           type: string
-          format: uri
+          example: "WNZ"
+        kebangsaan:
+          type: string
+          example: "Indonesia"
+        tempat_lahir:
+          type: string
+          example: "Banjarmasin"
+        tgl_lahir:
+          type: string
+          format: date
+          example: "2003-05-24"
+        id_agama:
+          type: integer
+          example: 9
+        id_status_sipil:
+          type: string
+          example: "L"
+        id_wil:
+          type: string
+          example: "32010011"
+        id_kabupaten:
+          type: string
+          example: "3201000011"
+        id_prov:
+          type: string
+          example: "11"
+        handphone:
+          type: string
+          example: "081234567811"
+        email:
+          type: string
+          format: email
+          example: "budi@gmail.com"
+        sekolah_asal:
+          type: string
+          example: "SMA Negeri 9"
+        id_jurusan_sekolah:
+          type: integer
+          example: 9
+        nilai_sekolah:
+          type: number
+          format: float
+          example: 88.9
+        tgl_lulus:
+          type: string
+          format: date
+          example: "2025-07-24"
+        IPK:
+          type: number
+          format: float
+          example: 3.11
+        id_status_peringatan:
+          type: string
+          example: "C"
         created_at:
           type: string
-          format: date-time
+          format: "date-time"
         updated_at:
           type: string
-          format: date-time
+          format: "date-time"
+        foto_ktp_url:
+          type: string
+          format: uri
+        foto_ijasah_url:
+          type: string
+          format: uri
+        foto_transkip_url:
+          type: string
+          format: uri
+        foto_kk_url:
+          type: string
+          format: uri
+        foto_ak_url:
+          type: string
+          format: uri
+        foto_sehat_url:
+          type: string
+          format: uri
+        foto_warna_url:
+          type: string
+          format: uri
+        status:
+          $ref: "#/components/schemas/StatusMhs"
+        peringatan:
+          $ref: "#/components/schemas/PeringatanMhs"
+        ortu:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrangTua"
 
     MahasiswaListItem:
       type: object
       properties:
         nim:
           type: string
-          example: "Z030323999"
+          example: "C000000000"
         nama_mhs:
           type: string
-          example: "Rivan"
+          example: "Dappa Mobile"
+
+    OrangTua:
+      type: object
+      properties:
+        id_ortu:
+          type: integer
+          example: 1
+        nim:
+          type: string
+          example: "C000000000"
+        nama_ortu:
+          type: string
+          example: "jarjit Santoso"
+        nik_ortu:
+          type: string
+          example: "6371012005750004"
+        id_agama:
+          type: integer
+          example: 1
+        id_pendidikan:
+          type: string
+          example: "S1"
+        id_pekerjaan:
+          type: string
+          example: "2"
+        id_status_hidup:
+          type: string
+          example: "1"
+        id_penghasilan:
+          type: integer
+          example: 4
+        id_kabupaten:
+          type: string
+          example: "6371"
+        id_prov:
+          type: string
+          example: "63"
+        negara_ortu:
+          type: string
+          example: "Indonesia"
+        handphone_ortu:
+          type: string
+          example: "081234567890"
+        email_ortu:
+          type: string
+          format: email
+          example: "budi.santoso@example.com"
+        tgl_lahir_ortu:
+          type: string
+          format: date
+          example: "1975-05-20"
+        id_hubungan:
+          type: integer
+          example: 1
+          description: "1: Ayah, 2: Ibu, 3: Wali"
+        created_at:
+          type: string
+          format: "date-time"
+        updated_at:
+          type: string
+          format: "date-time"
+    
+    OrangTuaListItem:
+      type: object
+      properties:
+        id_ortu:
+          type: integer
+          example: 1
+        nim:
+          type: string
+          example: "C000000000"
+        nama_ortu:
+          type: string
+          example: "jarjit Santoso"
+        id_hubungan:
+          type: integer
+          example: 1
+        mahasiswa:
+          type: object
+          properties:
+            nim:
+              type: string
+              example: "C000000000"
+            nama_mhs:
+              type: string
+              example: "Dappa Mobile"
 
     StatusMhs:
       type: object
@@ -224,55 +752,236 @@ components:
         nama_status_mhs:
           type: string
           example: "Aktif"
+        created_at:
+          type: string
+          format: "date-time"
+          readOnly: true
+        updated_at:
+          type: string
+          format: "date-time"
+          readOnly: true
 
+    PeringatanMhs:
+      type: object
+      properties:
+        id_status_peringatan:
+          type: string
+          example: "C"
+        nama_status_peringatan:
+          type: string
+          example: "SP1"
+        created_at:
+          type: string
+          format: "date-time"
+          readOnly: true
+        updated_at:
+          type: string
+          format: "date-time"
+          readOnly: true
+    
+    # ========= REQUEST BODY SCHEMAS (BLOCK STYLE) =========
     StoreMahasiswaRequest:
       type: object
       required:
         - nim
         - id_kategori_spp
-        - thn_ak_masuk
-        - thn_ak_lulus
         - nama_mhs
         - id_wil
       properties:
         nim:
           type: string
+          minLength: 10
+          maxLength: 10
         id_kategori_spp:
           type: integer
         thn_ak_masuk:
           type: string
+          minLength: 5
+          maxLength: 5
+          nullable: true
         thn_ak_lulus:
           type: string
+          minLength: 5
+          maxLength: 5
+          nullable: true
         nama_mhs:
           type: string
-        id_wil:
+          maxLength: 145
+        nik_mhs:
           type: string
-        foto_profile:
+          minLength: 16
+          maxLength: 16
+          nullable: true
+        # ... (dan seterusnya untuk properti lainnya)
+        foto_warna:
           type: string
           format: binary
-        # ... (lainnya sama seperti sebelumnya)
+          nullable: true
 
     UpdateMahasiswaRequest:
-      allOf:
-        - $ref: "#/components/schemas/StoreMahasiswaRequest"
-      description: Semua field bersifat optional untuk patch
+      type: object
+      description: .
+      properties:
+        nim:
+          type: string
+          minLength: 10
+          maxLength: 10
+        # ... (dan seterusnya untuk properti lainnya)
+        foto_warna:
+          type: string
+          format: binary
+          nullable: true
 
-    SuccessResponseMahasiswa:
+    StoreOrangTuaRequest:
+      type: object
+      required:
+        - nim
+        - nik_ortu
+        - id_kabupaten
+        - id_prov
+      properties:
+        nim:
+          type: string
+          minLength: 10
+          maxLength: 10
+          description: "NIM mahasiswa yang bersangkutan."
+        nama_ortu:
+          type: string
+          maxLength: 50
+          nullable: true
+        nik_ortu:
+          type: string
+          minLength: 16
+          maxLength: 16
+        # ... (dan seterusnya untuk properti lainnya)
+        id_hubungan:
+          type: integer
+          nullable: true
+          description: "1: Ayah, 2: Ibu, 3: Wali"
+
+    UpdateOrangTuaRequest:
+      type: object
+      description: .
+      properties:
+        nim:
+          type: string
+          minLength: 10
+          maxLength: 10
+          description: "NIM mahasiswa yang bersangkutan."
+        # ... (dan seterusnya untuk properti lainnya)
+        id_hubungan:
+          type: integer
+          nullable: true
+          description: "1: Ayah, 2: Ibu, 3: Wali"
+
+    StoreStatusMhsRequest:
+      type: object
+      required:
+        - id_status_mhs
+        - nama_status_mhs
+      properties:
+        id_status_mhs:
+          type: string
+          maxLength: 1
+        nama_status_mhs:
+          type: string
+          maxLength: 50
+
+    UpdateStatusMhsRequest:
+      type: object
+      properties:
+        id_status_mhs:
+          type: string
+          maxLength: 1
+        nama_status_mhs:
+          type: string
+          maxLength: 50
+
+    StorePeringatanMhsRequest:
+      type: object
+      required:
+        - id_status_peringatan
+        - nama_status_peringatan
+      properties:
+        id_status_peringatan:
+          type: string
+          maxLength: 1
+        nama_status_peringatan:
+          type: string
+          maxLength: 50
+
+    UpdatePeringatanMhsRequest:
+      type: object
+      properties:
+        id_status_peringatan:
+          type: string
+          maxLength: 1
+        nama_status_peringatan:
+          type: string
+          maxLength: 50
+
+    # ========= WRAPPER RESPONSE SCHEMAS =========
+    SuccessResponseStoreMahasiswa:
       type: object
       properties:
         message:
           type: string
+          example: "Mahasiswa berhasil ditambah."
         data:
           $ref: "#/components/schemas/Mahasiswa"
+
+    SuccessResponseUpdateMahasiswa:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Mahasiswa berhasil diupdate."
+        data:
+          $ref: "#/components/schemas/Mahasiswa"
+    
+    SuccessResponseOrangTua:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Orangtua berhasil ditambah."
+        data:
+          $ref: "#/components/schemas/OrangTua"
+          
+    SuccessResponseStatusMhs:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Status mahasiswa berhasil ditambah."
+        data:
+          $ref: "#/components/schemas/StatusMhs"
+          
+    SuccessResponsePeringatanMhs:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Status peringatan mahasiswa berhasil ditambah."
+        data:
+          $ref: "#/components/schemas/PeringatanMhs"
 
     ValidationError:
       type: object
       properties:
         message:
           type: string
+          example: "Validasi gagal."
         errors:
           type: object
           additionalProperties:
             type: array
             items:
               type: string
+      example:
+        message: "Validasi gagal."
+        errors:
+          nim:
+            - "The nim has already been taken."
+          email:
+            - "The email must be a valid email address."
