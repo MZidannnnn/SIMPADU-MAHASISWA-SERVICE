@@ -16,9 +16,9 @@ tags:
   - name: Orang Tua
     description: Operasi terkait data Orang Tua Mahasiswa.
   - name: Status Mahasiswa
-    description: Operasi terkait data  Status Mahasiswa.
+    description: Operasi terkait data  Status Mahasiswa.
   - name: Peringatan Mahasiswa
-    description: Operasi terkait data  Peringatan Mahasiswa.
+    description: Operasi terkait data  Peringatan Mahasiswa.
 
 paths:
   # ================= MAHASISWA ENDPOINTS =================
@@ -28,7 +28,9 @@ paths:
         - Mahasiswa
       operationId: storeMahasiswa
       summary: Tambah Mahasiswa Baru
-      description: Menambahkan data mahasiswa baru ke dalam sistem.
+      description: Menambahkan data mahasiswa baru ke dalam sistem. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -42,6 +44,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseStoreMahasiswa"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "422":
           $ref: "#/components/responses/ValidationError"
 
@@ -50,8 +54,8 @@ paths:
       tags:
         - Mahasiswa
       operationId: listMahasiswaMinimal
-      summary: Daftar Seluruh Mahasiswa 
-      description: Mengambil daftar semua mahasiswa hanya dengan NIM dan nama.
+      summary: Daftar Seluruh Mahasiswa (Publik)
+      description: Mengambil daftar semua mahasiswa hanya dengan NIM dan nama. Endpoint ini tidak memerlukan otentikasi.
       responses:
         "200":
           description: Berhasil mengambil daftar mahasiswa.
@@ -75,7 +79,9 @@ paths:
         - Mahasiswa
       operationId: getMahasiswaByNim
       summary: Detail Mahasiswa Berdasarkan NIM
-      description: Mengambil data lengkap seorang mahasiswa beserta relasi (status, peringatan, ortu).
+      description: Mengambil data lengkap seorang mahasiswa beserta relasi. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Data mahasiswa ditemukan.
@@ -83,6 +89,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Mahasiswa"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
     put:
@@ -90,7 +98,9 @@ paths:
         - Mahasiswa
       operationId: updateMahasiswa
       summary: Update Data Mahasiswa
-      description: Memperbarui data mahasiswa yang ada. . Endpoint ini menangani metode PUT dan PATCH.
+      description: Memperbarui data mahasiswa yang ada. Endpoint ini membutuhkan otentikasi dan menangani metode PUT dan PATCH.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -104,6 +114,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseUpdateMahasiswa"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
@@ -112,8 +124,10 @@ paths:
       tags:
         - Mahasiswa
       operationId: patchMahasiswa
-      summary: Update Data Mahasiswa 
-      description: Memperbarui data mahasiswa yang ada. .
+      summary: Update Data Mahasiswa (Partial)
+      description: Memperbarui data mahasiswa yang ada. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -123,6 +137,8 @@ paths:
       responses:
         "200":
           $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/200"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/paths/~1mahasiswa~1%7Bnim%7D/put/responses/404"
         "422":
@@ -132,7 +148,9 @@ paths:
         - Mahasiswa
       operationId: deleteMahasiswa
       summary: Hapus Data Mahasiswa
-      description: Menghapus data mahasiswa berdasarkan NIM.
+      description: Menghapus data mahasiswa berdasarkan NIM. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Berhasil dihapus.
@@ -144,6 +162,8 @@ paths:
                   message:
                     type: string
                     example: "Data Berhasil Dihapus"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -154,7 +174,9 @@ paths:
         - Orang Tua
       operationId: listOrangTua
       summary: Daftar Seluruh Orang Tua
-      description: Mengambil daftar semua orang tua beserta data minimal mahasiswa terkait.
+      description: Mengambil daftar semua orang tua beserta data minimal mahasiswa terkait. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Berhasil mengambil daftar orang tua.
@@ -164,12 +186,16 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/OrangTuaListItem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       tags:
         - Orang Tua
       operationId: storeOrangTua
       summary: Tambah Data Orang Tua
-      description: Menambahkan data orang tua baru untuk seorang mahasiswa. NIM tidak boleh memiliki lebih dari 3 orang tua (Ayah, Ibu, Wali) dan id_hubungan harus unik per NIM.
+      description: Menambahkan data orang tua baru untuk seorang mahasiswa. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -183,8 +209,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseOrangTua"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "422":
-          description: Validasi gagal atau aturan bisnis dilanggar (misal duplikat hubungan orang tua).
+          description: Validasi gagal atau aturan bisnis dilanggar.
           content:
             application/json:
               schema:
@@ -198,7 +226,9 @@ paths:
         - Orang Tua
       operationId: getOrangTuaById
       summary: Detail Orang Tua
-      description: Mengambil data lengkap orang tua berdasarkan ID uniknya.
+      description: Mengambil data lengkap orang tua berdasarkan ID uniknya. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Data orang tua ditemukan.
@@ -206,6 +236,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OrangTua"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
     put:
@@ -213,7 +245,9 @@ paths:
         - Orang Tua
       operationId: updateOrangTua
       summary: Update Data Orang Tua
-      description: Memperbarui data orang tua berdasarkan ID uniknya. Endpoint ini menangani PUT dan PATCH.
+      description: Memperbarui data orang tua berdasarkan ID uniknya. Endpoint ini membutuhkan otentikasi dan menangani PUT dan PATCH.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -227,6 +261,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseOrangTua"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
@@ -235,8 +271,10 @@ paths:
       tags:
         - Orang Tua
       operationId: patchOrangTua
-      summary: Update Data Orang Tua 
-      description: Memperbarui data orang tua berdasarkan ID uniknya.
+      summary: Update Data Orang Tua (Partial)
+      description: Memperbarui data orang tua berdasarkan ID uniknya. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -246,6 +284,8 @@ paths:
       responses:
         "200":
           $ref: "#/paths/~1mahasiswa~1orangtua~1%7Bid_ortu%7D/put/responses/200"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/paths/~1mahasiswa~1orangtua~1%7Bid_ortu%7D/put/responses/404"
         "422":
@@ -255,7 +295,9 @@ paths:
         - Orang Tua
       operationId: deleteOrangTua
       summary: Hapus Data Orang Tua
-      description: Menghapus data orang tua berdasarkan ID uniknya.
+      description: Menghapus data orang tua berdasarkan ID uniknya. Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Berhasil dihapus.
@@ -267,6 +309,8 @@ paths:
                   message:
                     type: string
                     example: "Orangtua berhasil dihapus."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -276,8 +320,8 @@ paths:
       tags:
         - Status Mahasiswa
       operationId: listStatusMahasiswa
-      summary: Daftar Semua Status Mahasiswa
-      description: Mengambil seluruh data  status mahasiswa.
+      summary: Daftar Semua Status Mahasiswa (Publik)
+      description: Mengambil seluruh data status mahasiswa. Endpoint ini tidak memerlukan otentikasi.
       responses:
         "200":
           description: Berhasil mengambil daftar status.
@@ -292,6 +336,9 @@ paths:
         - Status Mahasiswa
       operationId: storeStatusMahasiswa
       summary: Tambah Status Mahasiswa Baru
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -305,6 +352,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseStatusMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "422":
           $ref: "#/components/responses/ValidationError"
 
@@ -316,6 +365,9 @@ paths:
         - Status Mahasiswa
       operationId: getStatusMahasiswaById
       summary: Detail Status Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Data ditemukan.
@@ -323,6 +375,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StatusMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
     put:
@@ -330,6 +384,9 @@ paths:
         - Status Mahasiswa
       operationId: updateStatusMahasiswa
       summary: Update Status Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -343,6 +400,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponseStatusMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
@@ -352,6 +411,9 @@ paths:
         - Status Mahasiswa
       operationId: deleteStatusMahasiswa
       summary: Hapus Status Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Berhasil dihapus.
@@ -363,6 +425,8 @@ paths:
                   message:
                     type: string
                     example: "Data berhasil dihapus."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -372,8 +436,8 @@ paths:
       tags:
         - Peringatan Mahasiswa
       operationId: listPeringatanMahasiswa
-      summary: Daftar Semua Peringatan Mahasiswa
-      description: Mengambil seluruh data  peringatan mahasiswa.
+      summary: Daftar Semua Peringatan Mahasiswa (Publik)
+      description: Mengambil seluruh data peringatan mahasiswa. Endpoint ini tidak memerlukan otentikasi.
       responses:
         "200":
           description: Berhasil mengambil daftar peringatan.
@@ -388,6 +452,9 @@ paths:
         - Peringatan Mahasiswa
       operationId: storePeringatanMahasiswa
       summary: Tambah Peringatan Mahasiswa Baru
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -401,6 +468,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponsePeringatanMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "422":
           $ref: "#/components/responses/ValidationError"
 
@@ -412,6 +481,9 @@ paths:
         - Peringatan Mahasiswa
       operationId: getPeringatanMahasiswaById
       summary: Detail Peringatan Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Data ditemukan.
@@ -419,6 +491,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PeringatanMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
     put:
@@ -426,6 +500,9 @@ paths:
         - Peringatan Mahasiswa
       operationId: updatePeringatanMahasiswa
       summary: Update Peringatan Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -439,6 +516,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponsePeringatanMhs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
@@ -448,6 +527,9 @@ paths:
         - Peringatan Mahasiswa
       operationId: deletePeringatanMahasiswa
       summary: Hapus Peringatan Mahasiswa
+      description: Endpoint ini membutuhkan otentikasi.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Berhasil dihapus.
@@ -459,10 +541,21 @@ paths:
                   message:
                     type: string
                     example: "Data berhasil dihapus."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Masukkan token JWT yang didapat dari service auth dan admin.
+        Contoh: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+
   parameters:
     NimPath:
       name: nim
@@ -498,6 +591,21 @@ components:
       description: ID unik Status Peringatan (1 karakter).
 
   responses:
+    Unauthorized:
+      description: Otentikasi gagal. Token tidak valid, kedaluwarsa, atau tidak disertakan.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+            example:
+              success: false
+              message: "Token telah kedaluwarsa."
     ValidationError:
       description: Validasi gagal.
       content:
@@ -717,7 +825,7 @@ components:
         updated_at:
           type: string
           format: "date-time"
-    
+
     OrangTuaListItem:
       type: object
       properties:
@@ -778,7 +886,7 @@ components:
           type: string
           format: "date-time"
           readOnly: true
-    
+
     # ========= REQUEST BODY SCHEMAS (BLOCK STYLE) =========
     StoreMahasiswaRequest:
       type: object
@@ -938,7 +1046,7 @@ components:
           example: "Mahasiswa berhasil diupdate."
         data:
           $ref: "#/components/schemas/Mahasiswa"
-    
+
     SuccessResponseOrangTua:
       type: object
       properties:
@@ -947,7 +1055,7 @@ components:
           example: "Orangtua berhasil ditambah."
         data:
           $ref: "#/components/schemas/OrangTua"
-          
+
     SuccessResponseStatusMhs:
       type: object
       properties:
@@ -956,7 +1064,7 @@ components:
           example: "Status mahasiswa berhasil ditambah."
         data:
           $ref: "#/components/schemas/StatusMhs"
-          
+
     SuccessResponsePeringatanMhs:
       type: object
       properties:
