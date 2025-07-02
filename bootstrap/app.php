@@ -13,9 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Daftar middleware global di sini jika mau
-
-        // Tambahkan ini:
+        
         $middleware->alias([
             // Tambahkan middleware route di sini
             'jwt.validate' => \App\Http\Middleware\JwtValidate::class,
