@@ -6,6 +6,10 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PeringatanMhsController;
 use App\Http\Controllers\StatusMhsController;
 
+
+Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
+Route::get('/peringatan_mhs', [PeringatanMhsController::class, 'index']);
+Route::get('/status_mhs', [StatusMhsController::class, 'index']);
 Route::middleware('jwt.validate')->group(function () {
     // CRUD orangtua
     Route::get('/mahasiswa/orangtua', [OrangTuaController::class, 'index']);
@@ -21,7 +25,7 @@ Route::middleware('jwt.validate')->group(function () {
 
 
     // CRUD Mahasiswa
-    
+
     // Tampilkan detail mahasiswa
     Route::get('/mahasiswa/{nim}', [MahasiswaController::class, 'show']);
     // Tambah mahasiswa
@@ -34,7 +38,7 @@ Route::middleware('jwt.validate')->group(function () {
 
 
     //  CRUD status status_mhs
-    
+
     // Tampilkan detail status_mhs
     Route::get('/status_mhs/{id_status_mhs}', [StatusMhsController::class, 'show']);
     // Tambah status_mhs
@@ -47,7 +51,7 @@ Route::middleware('jwt.validate')->group(function () {
 
 
     //  CRUD status peringatan_mhs
-    
+
     // Tampilkan detail peringatan_mhs
     Route::get('/peringatan_mhs/{id_status_peringatan}', [PeringatanMhsController::class, 'show']);
     // Tambah peringatan_mhs
@@ -59,6 +63,3 @@ Route::middleware('jwt.validate')->group(function () {
     Route::delete('/peringatan_mhs/{id_status_peringatan}', [PeringatanMhsController::class, 'destroy']);
 });
 // tampilkan nim,dan nama seluru mahasiswa
-    Route::get('/mahasiswa/list_mahasiswa', [MahasiswaController::class, 'listMahasiswa']);
-    Route::get('/peringatan_mhs', [PeringatanMhsController::class, 'index']);
-    Route::get('/status_mhs', [StatusMhsController::class, 'index']);
