@@ -6,7 +6,8 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PeringatanMhsController;
 use App\Http\Controllers\StatusMhsController;
 
-// Route::middleware('has.token')->group(function () {
+// Route::middleware('jwt.validate')->group(function () {
+    
 // });
 
 // CRUD orangtua

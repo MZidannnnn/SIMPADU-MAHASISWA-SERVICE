@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Tambahkan ini:
         $middleware->alias([
             // Tambahkan middleware route di sini
-            'has.token' => \App\Http\Middleware\RequireBearerToken::class,
+            'jwt.validate' => \App\Http\Middleware\JwtValidate::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
